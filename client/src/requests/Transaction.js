@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseurl = 'http://localhost:4000/transactions'
+const baseurl = 'http://localhost:4000/transactions/'
 
 const create = async (transaction) => {
     const res = await axios.post(baseurl, transaction)
@@ -12,4 +12,15 @@ const fetchAll = async ()=>{
   return res.data
 }
 
-export default {create,fetchAll}
+
+const remove = async (id) => {
+  const res = await axios.delete(baseurl+id)
+  return res
+}
+
+const update = async (transaction)=>{
+  const res = await axios.put(baseurl+transaction.id,transaction)
+  return res.data
+}
+
+export default {create,fetchAll,remove,update}

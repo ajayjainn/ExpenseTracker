@@ -15,4 +15,19 @@ router.post('/',async (req,res)=>{
   return res.json(newT)
 })
 
+router.put('/:id',async (req,res)=>{
+  const id = req.params.id
+  const trans = req.body
+  const updated = await Transaction.findByIdAndUpdate(id,trans, {
+    new: true,
+  })
+  res.json(updated)
+})
+
+router.delete('/:id',async (req,res)=>{
+  const id = req.params.id
+  const trans = await Transaction.findByIdAndDelete(id)
+  res.send(204).end()
+})
+
 export default router
