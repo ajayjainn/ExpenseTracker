@@ -1,24 +1,37 @@
-import { useState } from "react"
-import axios from "axios"
+import { useEffect, useState } from "react"
+import TransactionService from './requests/Transaction'
 
-const App= () => {
+const App = () => {
 
-  const [form,setForm] = useState({
-    amount:0,
-    description:'',
-    date:''
-  })
+  const initialForm = {
+    amount: 0,
+    description: '',
+    date: ''
+  }
+  const [form, setForm] = useState(initialForm)
 
-  const handleInput = (e)=>{
-    setForm({...form,[e.target.name]:e.target.value})
+  const [transactions, setTransactions] = useState([])
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await TransactionService.fetchAll()
+      setTransactions(data.sort((a,b)=>a.createdAt>b.createdAt?-1:1))  
+    }
+    fetchData()
+  }, [])
+
+  const handleInput = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = async (e) => {
+    setForm(initialForm)
     e.preventDefault()
-    axios.post('http://localhost:4000/transactions',form)
+    const res = await TransactionService.create(form)
+    setTransactions(transactions.concat(res).sort((a,b)=>a.createdAt>b.createdAt?-1:1))
   }
 
-  return(
+  return (
     <div>
       <form onSubmit={handleSubmit}>
         <input onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
@@ -26,6 +39,28 @@ const App= () => {
         <input onChange={handleInput} value={form.date} type="date" name="date" />
         <button type="submit">Submit</button>
       </form>
+
+      <section>
+        <table style={{ marginTop: '10px' }}>
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map(trans =>
+            (
+              <tr key={trans.id}>
+                <td>{trans.amount}</td>
+                <td>{trans.description}</td>
+                <td>{trans.createdAt}</td>
+              </tr>)
+            )}
+          </tbody>
+        </table>
+      </section>
     </div>
   )
 }
