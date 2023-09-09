@@ -6,33 +6,31 @@ import { useDispatch } from 'react-redux'
 import { setUser } from './reducers/authReducer.js'
 const App = () => {
   const dispatch = useDispatch()
-  const [loading,setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
-  useEffect(()=>{
-    const fetchUser = async (req,res)=>{
+  useEffect(() => {
+    const fetchUser = async () => {
       const token = localStorage.getItem('expenseTrackerToken')
-      if(!token){
-        return
-      }
-      try{
-        const res = await accountService.fetchUser(token)
-        console.log(res)
-        dispatch(setUser(res.data.user))
+      if (token) {
+        try {
+          const res = await accountService.fetchUser(token)
+          console.log(res)
+          dispatch(setUser(res.data.user))
 
-      }catch(err){
-        if(err.response.status===401){
-          localStorage.removeItem('expenseTrackerToken')
+        } catch (err) {
+          if (err.response.status === 401) {
+            localStorage.removeItem('expenseTrackerToken')
+          }
         }
       }
-      
+      setLoading(false)
     }
 
     fetchUser()
-    setLoading(false)
-  },[])
+  }, [])
 
-  if(loading){
-    return(
+  if (loading) {
+    return (
       <div>
         Loading....
       </div>
@@ -41,8 +39,9 @@ const App = () => {
 
   return (
     <div>
-      <AppBar/>
-      <Outlet/>
+      <AppBar />
+      {!loading &&
+        <Outlet />}
     </div>
   )
 }

@@ -1,35 +1,50 @@
-import {Router} from "express"
+import { Router } from "express"
 import Transaction from "../models/Transaction.js"
 import passport from "passport"
 
 
 const router = Router()
 
-router.get('/',passport.authenticate('jwt',{session:false}), async (req,res)=>{
-  const allTransaction = await Transaction.find()
+router.get('/', async (req, res) => {
+  const userId = req.user.id
+
+  const allTransaction = await Transaction.find({user:userId})
   return res.json(allTransaction)
 })
 
-router.post('/',async (req,res)=>{
-  const newTrans = Transaction(req.body)
+router.post('/', async (req, res) => {
+  const newTrans = Transaction({ ...req.body, user: req.user.id })
   const newT = await newTrans.save()
-  console.log(newT)
   return res.json(newT)
 })
 
-router.put('/:id',async (req,res)=>{
+router.put('/:id', async (req, res) => {
   const id = req.params.id
-  const trans = req.body
-  const updated = await Transaction.findByIdAndUpdate(id,trans, {
-    new: true,
-  })
-  res.json(updated)
+
+  const trans = await Transaction.findById(id)
+  if (String(trans.user) === req.user.id) {
+    const updatedTrans = await Transaction.findByIdAndUpdate(id, req.body, {
+      new: true,
+    })
+    res.json(updatedTrans)
+  } else {
+    res.status(401).json("not authorized to update someone else's transaction")
+  }
+
 })
 
-router.delete('/:id',async (req,res)=>{
+router.delete('/:id', async (req, res) => {
+
   const id = req.params.id
-  const trans = await Transaction.findByIdAndDelete(id)
-  res.send(204).end()
+  const trans = await Transaction.findById(id)
+
+  if (String(trans.user) === req.user.id) {
+    await Transaction.findByIdAndDelete(id)
+    res.send(204).end()
+  } else {
+    res.status(401).json("not authorized to update someone else's transaction")
+  }
+
 })
 
 

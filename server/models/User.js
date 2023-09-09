@@ -10,12 +10,7 @@ const userSchema = new mongoose.Schema({
     unique:true
   },
   pHash:String,
-  transactions:[
-    {
-      type:mongoose.Schema.Types.ObjectId,
-      ref:'Transaction'
-    }
-  ]
+  categories:[{type:String}]
 })
 
 const User = mongoose.model('User',userSchema)

@@ -3,26 +3,30 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { Button, TextField } from '@mui/material';
+import { Autocomplete, Button, TextField } from '@mui/material';
 import TransactionService from '../requests/Transaction'
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
 
 const Content = ({ editTransaction, setEditTransaction, transactions, setTransactions }) => {
+
+  const categories = useSelector(state=>state.auth.user.categories)
 
   const initialForm = {
     amount: '',
     description: '',
-    date: dayjs('2022-04-17')
+    date: dayjs('2022-04-17'),
+    category:categories[0]
   }
-
+ 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form, setForm] = useState(initialForm)
 
   useEffect(() => {
-    if (editTransaction.amount!=undefined) {
+    if (editTransaction.amount != undefined) {
       setForm(editTransaction)
     }
   }, [editTransaction])
@@ -30,18 +34,21 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
+
   const handleSubmit = async (e) => {
-    setForm(initialForm)
+    console.log(form)
     e.preventDefault()
 
-    if(!editTransaction.amount){
+    if (!editTransaction.amount) {
       const res = await TransactionService.create(form)
       setTransactions(transactions.concat(res).sort((a, b) => a.date > b.date ? -1 : 1))
-    }else{
+      setForm(initialForm)
+      console.log(res)
+    } else {
       const res = await TransactionService.update(form)
       setEditTransaction({})
       setForm(initialForm)
-      setTransactions(transactions.map(trans=>trans.id===res.id?res:trans))
+      setTransactions(transactions.map(trans => trans.id === res.id ? res : trans))
       console.log(res)
     }
   }
@@ -50,7 +57,7 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
     <React.Fragment>
       <CardContent>
 
-        <form onSubmit={handleSubmit}>
+        <Box component='form' onSubmit={handleSubmit} sx={{display:'flex',flexWrap:'wrap'}}>
           <TextField size='small' sx={{ marginRight: 5 }} onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
           <TextField size='small' sx={{ marginRight: 5 }} onChange={handleInput} value={form.description} type="text" name="description" placeholder="description" />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -64,8 +71,19 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
               slotProps={{ textField: { variant: 'outlined', size: 'small' } }}
             />
           </LocalizationProvider>
-          <Button variant="contained" type="submit">{editTransaction.amount?'Update':'Submit'}</Button>
-        </form>
+
+          <Autocomplete
+            value={form.category}
+            onChange={(_,newValue)=>setForm({...form,category:newValue})}
+            disableClearable
+            options={categories}
+            size='small'
+            sx={{ width: 200 ,marginRight: 5}}
+            renderInput={(params) => <TextField {...params} label="Categories" />}
+          />
+
+          <Button variant="contained" type="submit">{editTransaction.amount ? 'Update' : 'Submit'}</Button>
+        </Box>
 
 
 
@@ -76,10 +94,10 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
   )
 };
 
-export default function OutlinedCard({editTransaction, setEditTransaction, transactions, setTransactions }) {
+export default function OutlinedCard({ editTransaction, setEditTransaction, transactions, setTransactions }) {
   return (
     <Box sx={{ minWidth: 275, margin: 5 }}>
-      <Card variant="outlined"><Content editTransaction={editTransaction}  setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions} /></Card>
+      <Card variant="outlined"><Content editTransaction={editTransaction} setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions} /></Card>
     </Box>
   );
 }

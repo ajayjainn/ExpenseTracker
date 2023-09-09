@@ -15,7 +15,6 @@ const login = async (credentials)=>{
   return res.data
 }
 const fetchUser = async (token) =>{
-  console.log('hell')
   const res = await axios.get('http://localhost:4000/user',{headers:headers(token)})
   return res;
 }

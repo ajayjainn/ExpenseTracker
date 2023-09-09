@@ -1,3 +1,13 @@
-GET http://localhost:4000/user
+GET http://localhost:4000/transactions
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5pa2hpbEBnbWFpbC5jb20iLCJmbmFtZSI6Im5pa2hpbCIsImlhdCI6MTY5NDIyOTQwMiwiZXhwIjoxNjk1MDkzNDAyfQ.83KBsPKhQcO0PJGn5fSieC8G3b89UwgKk-aRvAkj1vA
 
+
+###
+POST http://localhost:4000/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFqYXlAZ21haWwuY29tIiwiZm5hbWUiOiJhamF5IiwiaWF0IjoxNjk0MjU2NDE1LCJleHAiOjE2OTUxMjA0MTV9.B7IlyQX-hapDEmrUcZ4buXLkN2DYD26rf3gfDO6KyXw
+
+{
+  "amount": 1000,
+  "description": "from vs code",
+  "date": "2022-04-16T18:30:00.000Z"
+}

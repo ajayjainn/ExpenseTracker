@@ -8,8 +8,9 @@ const headers = (token)=> {
 }
 
 const create = async (transaction) => {
-    const res = await axios.post(baseurl,transaction)
-    return res.data
+  const token = localStorage.getItem('expenseTrackerToken')
+  const res = await axios.post(baseurl,transaction,{headers:headers(token)})
+  return res.data
 }
 
 const fetchAll = async ()=>{
@@ -20,12 +21,14 @@ const fetchAll = async ()=>{
 
 
 const remove = async (id) => {
-  const res = await axios.delete(baseurl+id)
+  const token = localStorage.getItem('expenseTrackerToken')
+  const res = await axios.delete(baseurl+id,{headers:headers(token)})
   return res
 }
 
 const update = async (transaction)=>{
-  const res = await axios.put(baseurl+transaction.id,transaction)
+  const token = localStorage.getItem('expenseTrackerToken')
+  const res = await axios.put(baseurl+transaction.id,transaction,{headers:headers(token)})
   return res.data
 }
 

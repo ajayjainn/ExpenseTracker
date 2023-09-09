@@ -10,12 +10,15 @@ const router = Router()
 router.post('/register',async (req,res)=>{
   const saltRounds = 10
   const pHash = await bcrypt.hash(req.body.password, saltRounds)
+  
+  const categories = ['Travel','Shopping','Investment','Bills']
 
   const userData = {
     fname:req.body.fname,
     lname:req.body.lname,
     pHash,
-    email:req.body.email
+    email:req.body.email,
+    categories:categories
   }
   const user = await User(userData).save()
   console.log(user)
@@ -33,7 +36,7 @@ router.post('/login',async (req,res)=>{
       fname:user.fname
     }
     const token = jwt.sign(payload,config.KEY,{ expiresIn: '10d' })
-    res.json({email:user.email,token})
+    res.json({user:user,token})
   }else{
     res.status(401).json('wtf bro, wrong password')
   }

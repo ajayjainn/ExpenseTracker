@@ -7,9 +7,9 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import CheckAuth from './utils/CheckAuth.jsx'
 import CheckGuest from './utils/CheckGuest.jsx'
-import React from 'react'
 import { Provider } from 'react-redux'
 import store from './store.js'
+import Category from './pages/Category.jsx'
 
 const router = createBrowserRouter([
     {
@@ -26,6 +26,10 @@ const router = createBrowserRouter([
             {
                 path: '/register',
                 element: <CheckGuest><Register /></CheckGuest>
+            },
+            {
+                path: '/category',
+                element: <CheckAuth><Category /> </CheckAuth>
             }
         ]
     }

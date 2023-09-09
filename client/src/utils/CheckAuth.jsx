@@ -8,6 +8,7 @@ export default function CheckAuth({ children }) {
   if(user){
     return children;
   }else{
+    console.log('wtf are you even doing')
     return <Navigate to={'/login'}/>
   }
   

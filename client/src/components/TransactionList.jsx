@@ -40,6 +40,7 @@ export default function BasicTable({ setEditTransaction,transactions, setTransac
             <TableRow>
               <TableCell><strong>Amount</strong></TableCell>
               <TableCell align="center"><strong>Description</strong></TableCell>
+              <TableCell align="center"><strong>Category</strong></TableCell>
               <TableCell align="center"><strong>Date</strong></TableCell>
               <TableCell align="center"><strong>Action</strong></TableCell>
             </TableRow>
@@ -54,6 +55,7 @@ export default function BasicTable({ setEditTransaction,transactions, setTransac
                   {row.amount}
                 </TableCell>
                 <TableCell align="center">{row.description}</TableCell>
+                <TableCell align="center">{row.category}</TableCell>
                 <TableCell align="center">{dayjs(row.date).format('MMMM D, YYYY')}</TableCell>
                 <TableCell align="center">
 

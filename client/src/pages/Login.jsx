@@ -44,7 +44,7 @@ export default function SignIn() {
       password: data.get('password'),
     }
     const res = await accountService.login(credentials)
-    dispatch(setUser(res))    
+    dispatch(setUser(res.user))    
     console.log(res)
     navigate('/')
   };
