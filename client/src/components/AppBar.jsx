@@ -5,8 +5,26 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '../reducers/authReducer';
+
+const linkStyle = {
+  textDecoration:'none',
+  color:'white',
+  cursor:'pointer'
+}
 
 export default function ButtonAppBar() {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
+  const logout = ()=>{
+    localStorage.removeItem('expenseTrackerToken')
+    dispatch(removeUser())
+    navigate('/login')
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -21,9 +39,11 @@ export default function ButtonAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Expense Tracker
+            <Link style={linkStyle} to='/'>Expense Tracker</Link>
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={logout}>Logout</Button>
+          <Button color="inherit"><Link style={linkStyle} to='/login'>Login</Link></Button>
+          <Button color="inherit"><Link style={linkStyle} to='/register'>Register</Link></Button>
         </Toolbar>
       </AppBar>
     </Box>

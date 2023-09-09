@@ -1,9 +1,11 @@
 import {Router} from "express"
 import Transaction from "../models/Transaction.js"
+import passport from "passport"
+
 
 const router = Router()
 
-router.get('/',async (req,res)=>{
+router.get('/',passport.authenticate('jwt',{session:false}), async (req,res)=>{
   const allTransaction = await Transaction.find()
   return res.json(allTransaction)
 })
@@ -29,5 +31,6 @@ router.delete('/:id',async (req,res)=>{
   const trans = await Transaction.findByIdAndDelete(id)
   res.send(204).end()
 })
+
 
 export default router

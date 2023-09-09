@@ -1,31 +1,48 @@
-import { useEffect, useState } from "react"
-import TransactionService from './requests/Transaction'
+import { useEffect, useState } from 'react'
 import AppBar from './components/AppBar.jsx'
-import TransactionForm from './components/TransactionForm.jsx'
-import TransactionList from './components/TransactionList.jsx'
-import { Container } from "@mui/material"
-
+import { Outlet } from "react-router-dom"
+import accountService from './requests/Account.js'
+import { useDispatch } from 'react-redux'
+import { setUser } from './reducers/authReducer.js'
 const App = () => {
+  const dispatch = useDispatch()
+  const [loading,setLoading] = useState(true)
 
-  const [transactions, setTransactions] = useState([])
+  useEffect(()=>{
+    const fetchUser = async (req,res)=>{
+      const token = localStorage.getItem('expenseTrackerToken')
+      if(!token){
+        return
+      }
+      try{
+        const res = await accountService.fetchUser(token)
+        console.log(res)
+        dispatch(setUser(res.data.user))
 
-  const [editTransaction,setEditTransaction] = useState({})
-
-  useEffect(() => {
-    async function fetchData() {
-      const data = await TransactionService.fetchAll()
-      setTransactions(data.sort((a,b)=>a.date>b.date?-1:1))  
+      }catch(err){
+        if(err.response.status===401){
+          localStorage.removeItem('expenseTrackerToken')
+        }
+      }
+      
     }
-    fetchData()
-  }, [])
+
+    fetchUser()
+    setLoading(false)
+  },[])
+
+  if(loading){
+    return(
+      <div>
+        Loading....
+      </div>
+    )
+  }
 
   return (
     <div>
       <AppBar/>
-      <Container>
-      <TransactionForm editTransaction={editTransaction}  setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions}/>
-      <TransactionList setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions}/>
-      </Container>
+      <Outlet/>
     </div>
   )
 }
