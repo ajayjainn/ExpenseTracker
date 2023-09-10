@@ -58,15 +58,16 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
       <CardContent>
 
         <Box component='form' onSubmit={handleSubmit} sx={{display:'flex',flexWrap:'wrap'}}>
-          <TextField size='small' sx={{ marginRight: 5 }} onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
-          <TextField size='small' sx={{ marginRight: 5 }} onChange={handleInput} value={form.description} type="text" name="description" placeholder="description" />
+          <TextField size='small' sx={{ marginRight: 5,marginTop:5 }} onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
+          <TextField size='small' sx={{ marginRight: 5,marginTop:5  }} onChange={handleInput} value={form.description} type="text" name="description" placeholder="description" />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
 
             <DesktopDatePicker
               label="Transaction Date"
               name="date"
+              
               value={dayjs(form.date)}
-              sx={{ marginRight: 5 }}
+              sx={{ marginRight: 5 ,marginTop:5 }}
               onChange={(newVal) => setForm({ ...form, date: newVal })}
               slotProps={{ textField: { variant: 'outlined', size: 'small' } }}
             />
@@ -78,11 +79,11 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
             disableClearable
             options={categories}
             size='small'
-            sx={{ width: 200 ,marginRight: 5}}
+            sx={{ width: 200 ,marginRight: 5,marginTop:5 }}
             renderInput={(params) => <TextField {...params} label="Categories" />}
           />
 
-          <Button variant="contained" type="submit">{editTransaction.amount ? 'Update' : 'Submit'}</Button>
+          <Button style={{display:'block',margin:'auto',marginTop:20}} variant="contained" type="submit">{editTransaction.amount ? 'Update' : 'Submit'}</Button>
         </Box>
 
 

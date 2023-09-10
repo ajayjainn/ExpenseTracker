@@ -34,7 +34,7 @@ export default function BasicTable({ setEditTransaction,transactions, setTransac
       <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 5 }}>
         List of transactions
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer style={{marginBottom:15}} component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

@@ -23,13 +23,15 @@ const Content = () => {
     e.preventDefault()
     const res = await CategoryService.create(name)
     dispatch(setUser(res.data))
+    setName('')
   }
 
   return (
     <React.Fragment>
       <CardContent>
 
-        <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap',justifyContent:'center'
+       }}>
           <TextField size='small' sx={{ marginRight: 5 }} onChange={handleInput} value={name} type="text" name="amount" placeholder="New Category Name" />
           <Button variant="contained" type="submit">Submit</Button>
         </Box>
