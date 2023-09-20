@@ -10,8 +10,18 @@ import {
   Tooltip,
 } from '@devexpress/dx-react-chart-material-ui';
 import { EventTracker } from '@devexpress/dx-react-chart';
+import { Typography } from '@mui/material';
 
 const TransactionChart = ({chartData}) => {
+
+  if(!chartData.length>0){
+    return(
+      <Typography variant='h4' sx={{ textAlign: 'center', margin: 5 }}>
+        Add a transaction to view chart
+      </Typography> 
+    )
+  }
+
     return (
       <Paper style={{ marginTop: 20 }}>
         <Chart

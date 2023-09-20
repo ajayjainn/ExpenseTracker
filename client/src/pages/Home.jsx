@@ -4,47 +4,54 @@ import TransactionForm from '../components/TransactionForm.jsx'
 import TransactionList from '../components/TransactionList.jsx'
 import { Container } from "@mui/material"
 import TransactionChart from '../components/TransactionChart.jsx'
+import { setTransactions } from "../reducers/transactionReducer"
+import { useDispatch, useSelector } from "react-redux"
 
 const Home = () => {
 
-  const [transactions, setTransactions] = useState([])
-  const [editTransaction, setEditTransaction] = useState({})
+  const [chartData, setChartData] = useState([])
+  const transactions = useSelector(state => state.transactions)
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    async function fetchData() {
-      const data = await TransactionService.fetchAll()
-      setTransactions(data.sort((a, b) => a.date > b.date ? -1 : 1))
+    const fetchData = async () => {
+      const transData = await TransactionService.fetchAll()
+      const sortedTransaction = transData.sort((a, b) => a.date > b.date ? -1 : 1)
+      dispatch(setTransactions(sortedTransaction))
     }
     fetchData()
   }, [])
 
 
-  const data = {}
-  const chartData = []
-  if(transactions){
-
-    transactions.forEach((trans)=>{
-      if(data[trans.category]){
-        data[trans.category]+=trans.amount
-      }else{
+  useEffect(() => {
+    const data = {}
+    transactions.forEach((trans) => {
+      if (data[trans.category]) {
+        data[trans.category] += trans.amount
+      } else {
         data[trans.category] = trans.amount
       }
     })
-
     const keys = Object.keys(data)
+    const temp = []
 
-    keys.forEach((key)=>{
-      chartData.push({"Category":key,"Expense":data[key]})
+    keys.forEach((key) => {
+      temp.push({ "Category": key, "Expense": data[key] })
     })
-    console.log(chartData);
-  }
+
+    setChartData(temp)
+  },[transactions])
+
+
+
 
   return (
     <div>
       <Container>
         <TransactionChart chartData={chartData} />
-        <TransactionForm editTransaction={editTransaction} setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions} />
-        <TransactionList setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions} />
+        <TransactionForm />
+        <TransactionList />
       </Container>
     </div>
   )

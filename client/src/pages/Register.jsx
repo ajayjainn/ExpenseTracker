@@ -9,6 +9,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useDispatch } from 'react-redux';
+import {setMessage} from '../reducers/messageReducer'
 
 import accountService from '../requests/Account.js'
 
@@ -31,10 +33,16 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
+    if(!data.get('firstName') || !data.get('lastName') || !data.get('email') || !data.get('password')){
+      dispatch(setMessage(['One or more field empty', false]))
+      return setTimeout(() => dispatch(setMessage(null)), 5000)
+    }
 
     const userData = {
       fname: data.get('firstName'),
@@ -42,9 +50,14 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     }
-    console.log(userData);
-    await accountService.register(userData)
-    navigate('/login')
+    try{
+      await accountService.register(userData)
+      dispatch(setMessage(['Account created!', true]))
+      navigate('/login')
+    }catch(e){
+      dispatch(setMessage([e.response.data, false]))
+    }
+    setTimeout(() => dispatch(setMessage(null)), 5000)
     
   };
 

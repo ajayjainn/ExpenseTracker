@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import CategoryService from '../requests/Category.js'
 import {setUser} from '../reducers/authReducer'
 import { useDispatch } from 'react-redux';
+import {setMessage} from '../reducers/messageReducer.js'
 
 
 const Content = () => {
@@ -23,6 +24,8 @@ const Content = () => {
     e.preventDefault()
     const res = await CategoryService.create(name)
     dispatch(setUser(res.data))
+    dispatch(setMessage([`Category '${name}' added successfully`,true]))
+    setTimeout(()=>dispatch(setMessage(null)),5000)
     setName('')
   }
 

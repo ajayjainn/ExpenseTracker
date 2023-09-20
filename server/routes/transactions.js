@@ -36,11 +36,15 @@ router.delete('/:id', async (req, res) => {
   const id = req.params.id
   const trans = await Transaction.findById(id)
 
+  if(!trans){
+    return res.sendStatus(404).end()
+  }
+
   if (String(trans.user) === req.user.id) {
     await Transaction.findByIdAndDelete(id)
-    res.send(204).end()
+    res.sendStatus(204).end()
   } else {
-    res.status(401).json("not authorized to update someone else's transaction")
+    res.sendStatus(401).json("not authorized to update someone else's transaction")
   }
 
 })

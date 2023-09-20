@@ -2,7 +2,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import accountService from '../requests/Account'
 
 import { setUser } from '../reducers/authReducer';
+import {setMessage} from '../reducers/messageReducer'
 import { useDispatch } from 'react-redux';
 
 function Copyright(props) {
@@ -30,23 +31,30 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
-    
+
 
 export default function SignIn() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const handleSubmit =async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const credentials = {
       email: data.get('email'),
       password: data.get('password'),
     }
-    const res = await accountService.login(credentials)
-    dispatch(setUser(res.user))    
-    console.log(res)
-    navigate('/')
+
+    try {
+      const res = await accountService.login(credentials)
+      dispatch(setUser(res.user))
+      navigate('/')
+      dispatch(setMessage(['Login success', true]))
+    } catch (error) {
+      dispatch(setMessage([error.response.data, false]))
+    }
+    setTimeout(() => dispatch(setMessage(null)), 5000)
+
   };
   return (
     <ThemeProvider theme={defaultTheme}>

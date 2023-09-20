@@ -10,22 +10,40 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import transactionService from '../requests/Transaction.js'
 import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeTransaction } from '../reducers/transactionReducer.js';
+import { setEditTransaction } from '../reducers/editTransactionReducer.js';
+import { setMessage } from '../reducers/messageReducer.js';
 
-export default function BasicTable({ setEditTransaction,transactions, setTransactions }) {
+export default function BasicTable() {
+
+  const dispatch = useDispatch()
+  const transactions = useSelector(state=>state.transactions)
+  const sortedTrans = transactions.slice().sort((a, b) => a.date > b.date ? -1 : 1)
+  
 
   const handleEdit = (transaction) => {
-    setEditTransaction(transaction)
+   dispatch(setEditTransaction(transaction))
     return
   }
 
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete the transaction?")){
       const res = await transactionService.remove(id)
-      setTransactions(transactions.filter(trans => trans.id != id))
+      dispatch(removeTransaction(id))
       if(res.status===204){
-        alert('Deleted Successfully')
+        dispatch(setMessage(['Deleted Successfully',true]))
+        setTimeout(()=>dispatch(setMessage(null)),5000)
       }
     }
+  }
+
+  if(!sortedTrans.length>0){
+    return(
+      <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 5 }}>
+        No data to display
+      </Typography> 
+    )
   }
 
   return (
@@ -33,7 +51,7 @@ export default function BasicTable({ setEditTransaction,transactions, setTransac
 
       <Typography variant='h4' sx={{ textAlign: 'center', marginBottom: 5 }}>
         List of transactions
-      </Typography>
+      </Typography> 
       <TableContainer style={{marginBottom:15}} component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -46,7 +64,7 @@ export default function BasicTable({ setEditTransaction,transactions, setTransac
             </TableRow>
           </TableHead>
           <TableBody>
-            {transactions.map((row) => (
+            {sortedTrans.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

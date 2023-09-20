@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   pHash:String,
   categories:[{type:String}]
 })
-
+userSchema.plugin(uniqueValidator,{message:'Error, {PATH} already in use.'})
 const User = mongoose.model('User',userSchema)
 
 export default User

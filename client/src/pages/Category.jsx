@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {setUser} from '../reducers/authReducer'
 import CategoryService from '../requests/Category.js'
 import CategoryForm from '../components/CategoryForm.jsx'
+import { setMessage } from '../reducers/messageReducer';
 export default function Category() {
 
   const dispatch = useDispatch()
@@ -22,9 +23,9 @@ export default function Category() {
       const res = await CategoryService.remove(name)
       // setTransactions(transactions.filter(trans => trans.id != id))
       if(res.status===200){
-        console.log('deleted')
-        alert('Deleted Successfully')
         dispatch(setUser(res.data))
+        dispatch(setMessage(['Category deleted successfully',true]))
+        setTimeout(()=>dispatch(setMessage(null)),5000)
       }
     }
   }

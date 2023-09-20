@@ -9,65 +9,77 @@ import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addTransaction, setTransactions } from '../reducers/transactionReducer';
+import { setEditTransaction } from '../reducers/editTransactionReducer'
+import { setMessage } from '../reducers/messageReducer'
 
-const Content = ({ editTransaction, setEditTransaction, transactions, setTransactions }) => {
+const Content = () => {
 
-  const categories = useSelector(state=>state.auth.user.categories)
+  const categories = useSelector(state => state.auth.user.categories)
+  const transactions = useSelector(state => state.transactions)
+  const editTransaction = useSelector(state => state.editTransaction)
+  const dispatch = useDispatch()
 
   const initialForm = {
     amount: '',
     description: '',
     date: dayjs('2022-04-17'),
-    category:categories[0]
+    category: categories[0]
   }
- 
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form, setForm] = useState(initialForm)
 
   useEffect(() => {
-    if (editTransaction.amount != undefined) {
-      setForm(editTransaction)
+    if (editTransaction != null) {
+      setForm(editTransaction);
     }
-  }, [editTransaction])
+  }, [editTransaction]);
 
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
-    console.log(form)
     e.preventDefault()
 
-    if (!editTransaction.amount) {
+
+
+    if (!editTransaction) {
       const res = await TransactionService.create(form)
-      setTransactions(transactions.concat(res).sort((a, b) => a.date > b.date ? -1 : 1))
+      dispatch(addTransaction(res))
       setForm(initialForm)
-      console.log(res)
+
+      dispatch(setMessage(['Expense added successfully', true]))
+
     } else {
       const res = await TransactionService.update(form)
-      setEditTransaction({})
+      dispatch(setEditTransaction(null))
       setForm(initialForm)
-      setTransactions(transactions.map(trans => trans.id === res.id ? res : trans))
-      console.log(res)
+      const updatedTrans = transactions.map(trans => trans.id === res.id ? res : trans)
+      dispatch(setTransactions(updatedTrans))
+      dispatch(setMessage(['Expense updated successfully', true]))
     }
-  }
 
+    setTimeout(() => dispatch(setMessage(null)), 5000)
+
+  }
   return (
     <React.Fragment>
       <CardContent>
 
-        <Box component='form' onSubmit={handleSubmit} sx={{display:'flex',flexWrap:'wrap'}}>
-          <TextField size='small' sx={{ marginRight: 5,marginTop:5 }} onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
-          <TextField size='small' sx={{ marginRight: 5,marginTop:5  }} onChange={handleInput} value={form.description} type="text" name="description" placeholder="description" />
+        <Box component='form' onSubmit={handleSubmit} sx={{ display: 'flex', flexWrap: 'wrap' }}>
+          <TextField size='small' sx={{ marginRight: 5, marginTop: 5 }} onChange={handleInput} value={form.amount} type="number" name="amount" placeholder="Transaction Amount" />
+          <TextField size='small' sx={{ marginRight: 5, marginTop: 5 }} onChange={handleInput} value={form.description} type="text" name="description" placeholder="description" />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
 
             <DesktopDatePicker
               label="Transaction Date"
               name="date"
-              
+
               value={dayjs(form.date)}
-              sx={{ marginRight: 5 ,marginTop:5 }}
+              sx={{ marginRight: 5, marginTop: 5 }}
               onChange={(newVal) => setForm({ ...form, date: newVal })}
               slotProps={{ textField: { variant: 'outlined', size: 'small' } }}
             />
@@ -75,17 +87,16 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
 
           <Autocomplete
             value={form.category}
-            onChange={(_,newValue)=>setForm({...form,category:newValue})}
+            onChange={(_, newValue) => setForm({ ...form, category: newValue })}
             disableClearable
             options={categories}
             size='small'
-            sx={{ width: 200 ,marginRight: 5,marginTop:5 }}
+            sx={{ width: 200, marginRight: 5, marginTop: 5 }}
             renderInput={(params) => <TextField {...params} label="Categories" />}
           />
 
-          <Button style={{display:'block',margin:'auto',marginTop:20}} variant="contained" type="submit">{editTransaction.amount ? 'Update' : 'Submit'}</Button>
+          <Button style={{ display: 'block', margin: 'auto', marginTop: 20 }} variant="contained" type="submit">{editTransaction ? 'Update' : 'Submit'}</Button>
         </Box>
-
 
 
       </CardContent>
@@ -95,10 +106,10 @@ const Content = ({ editTransaction, setEditTransaction, transactions, setTransac
   )
 };
 
-export default function OutlinedCard({ editTransaction, setEditTransaction, transactions, setTransactions }) {
+export default function OutlinedCard() {
   return (
     <Box sx={{ minWidth: 275, margin: 5 }}>
-      <Card variant="outlined"><Content editTransaction={editTransaction} setEditTransaction={setEditTransaction} transactions={transactions} setTransactions={setTransactions} /></Card>
+      <Card variant="outlined"><Content /></Card>
     </Box>
   );
 }
