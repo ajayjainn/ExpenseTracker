@@ -2,7 +2,6 @@ import express from 'express'
 import config from './utils/config.js'
 import mongoose from 'mongoose'
 import cors from 'cors'
-import Transaction from './models/Transaction.js'
 import connect from './database/mongodb.js'
 import transRouter from './routes/transactions.js'
 import authRouter from './routes/auth.js'
@@ -22,9 +21,7 @@ await connect()
 app.use(passport.initialize())
 passportConfig(passport)
 
-app.get('/',(req,res)=>{
-  return res.send("hello world").end()
-})
+app.use(express.static('dist'))
 
 app.use('/transactions',passport.authenticate('jwt',{session:false}),transRouter)
 

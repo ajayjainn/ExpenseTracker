@@ -5,7 +5,6 @@ const router = Router()
 
 router.get('/', async (req, res) => {
   const userId = req.user.id
-
   const allTransaction = await Transaction.find({user:userId})
   return res.json(allTransaction)
 })
