@@ -5,17 +5,17 @@ const headers = (token)=> {
 }
 
 const register = async (userData)=>{
-  const res = await axios.post('http://localhost:4000/auth/register/',userData)
+  const res = await axios.post('/auth/register/',userData)
   return res.data
 
 }
 const login = async (credentials)=>{
-  const res = await axios.post('http://localhost:4000/auth/login/',credentials)
+  const res = await axios.post('/auth/login/',credentials)
   localStorage.setItem('expenseTrackerToken',res.data.token)
   return res.data
 }
 const fetchUser = async (token) =>{
-  const res = await axios.get('http://localhost:4000/user',{headers:headers(token)})
+  const res = await axios.get('/user',{headers:headers(token)})
   return res;
 }
 

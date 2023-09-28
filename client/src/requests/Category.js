@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseurl = 'http://localhost:4000/category/'
+const baseurl = '/category/'
 
 const headers = (token)=> {
   return {authorization:`Bearer ${token}`}

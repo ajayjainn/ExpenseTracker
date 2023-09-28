@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
